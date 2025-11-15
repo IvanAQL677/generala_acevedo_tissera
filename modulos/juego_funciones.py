@@ -1,6 +1,90 @@
 import random
+import json
+import os
+import time
 
-def turno():
+def cargar_categorias():
+    if not os.path.exists('json/categorias.json'):
+        return [] 
+    with open('json/categorias.json', 'r', encoding="utf-8")  as info:
+        categorias_lista = json.load(info)
+        for key, value in categorias_lista.items():
+            name = value.get("nombre")
+            sum_type = value.get("tipo de suma")
+            default_score = value.get("puntaje default")
+            
+            print(f"{key}: name={name}, sum_type={sum_type}, default_score={default_score}")
+        return categorias_lista
+
+def print_dados(dados, total):
+    for i in dados:
+        print(f"┌───┐", end="  ")
+    print()
+    for i in dados:
+        print(f"│ {i} │", end="  ")
+
+    print(f' = {total} TOTAL')
+
+    for i in dados:
+        print(f"└───┘", end="  ")
+    print()
+
+
+def decidir_orden():
+    print('Tira los dados para decidir quien va primero! El que tenga la suma mas grande comienza!')
+    while True:
+        lanzar = input('Lanza los dados con enter!')
+        oponente_tiro = []
+        jugador_tiro = []
+        oponente_resultado = 0
+        jugador_resultado = 0
+        
+        for i in range(5):
+            oponente_tiro.append(random.randint(1, 6))
+            jugador_tiro.append(random.randint(1, 6))
+
+        for i in range(5):
+            oponente_resultado += oponente_tiro[i-1]
+            jugador_resultado += jugador_tiro[i-1]
+
+        print('################/RESULTADOS/################')
+        print('#### Jugador: ')
+        print_dados(jugador_tiro, jugador_resultado)
+        print('Oponente esta tirando...')
+        time.sleep(2)
+
+        
+        print('#### Oponente: ')
+        print_dados(oponente_tiro, oponente_resultado)
+        time.sleep(2)
+
+        
+        if oponente_resultado > jugador_resultado:
+            print('Comienza el oponente!')
+            return False
+        elif oponente_resultado < jugador_resultado:
+            print('Comienza el jugador!')
+            return True
+        else:
+            print('Empate. (Que suerte! O no) Tiren de nuevo.')
+        time.sleep(2)
+
+def tirar_dados(conservados):
+    lanzar = input('Lanza los dados con Enter!')
+    resultados = []
+    for i in range(5):
+        if conservados[i]:
+            resultados[i] = 0
+            continue
+        resultados[i] = random.randint(1, 6)
+    return resultados
+
+
+
+
+
+
+def tirar_dados_viejo(): # creo que tendria que rehacerse este
     resultados_final = [0] * 5
     resultados_conservar = [False] * 5
 
