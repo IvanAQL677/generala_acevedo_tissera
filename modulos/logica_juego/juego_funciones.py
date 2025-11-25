@@ -2,6 +2,8 @@ import random
 import json
 import os
 import time
+
+# Comentar este import si se va a usar alguna funcion de manera directa, sobre este archivo
 import modulos.validaciones.valids as v
 
 def cargar_categorias():
@@ -17,19 +19,18 @@ def cargar_categorias():
             print(f"{key}: name={name}, sum_type={sum_type}, default_score={default_score}")
         return categorias_lista
 
-def print_dados(dados, total):
+# Funcion que solo funciona para printear dados que vayan tirando durante el juego
+def print_dados(dados):
     for i in dados:
         print(f"┌───┐", end="  ")
     print()
     for i in dados:
         print(f"│ {i} │", end="  ")
-
-    print(f' = {total} TOTAL')
-
+    #comentar este print para que se vea bien el total al la derecha
+    print()
+    #print(f' = {total} TOTAL')
     for i in dados:
         print(f"└───┘", end="  ")
-    print()
-
 
 def decidir_orden(list_jug):
     # cada jugador tira un dado y se guardan en un diccionario, dentro de una lista
@@ -38,20 +39,30 @@ def decidir_orden(list_jug):
     info_jugadores = []
     dado_ganador = 0
     ganador = {}
-
+    print("<<<<<<------ Tiren los dados para decidir quien sera el que comienze el juego. ------>>>>>>")
     #   Ciclo para que cada jugador tire un dado y quede guardado su nombre y dado
     for jug in list_jug:
-        tirada = input(f"Turno de {jug["nombre"]}.Presione enter para tirar los dados.")
+        tirada = input(f"Turno de {jug["nombre"]}. Presione enter para tirar los dados.")
         time.sleep(1)
         # Hacer evento para tocar enter y tirar los dados
         dado = random.randint(1,6)
         datos_jug = {
             "nombre" : jug["nombre"],
-            "dado" : 1
+            "dado" : dado
         }
         info_jugadores.append(datos_jug)
+        print_dados([dado])
+        print()
     
-    v.resolver_empates(info_jugadores)
+    # Si no hay repetidos, saltea la funcion
+    valores = [j["dado"] for j in info_jugadores]
+    if len(valores) == len(set(valores)):
+        pass # no hay empate
+    else:
+        #   Envia solo los dados en empate y no todos los dados
+        maximo = max(j["dado"] for j in info_jugadores)
+        empatados = [j for j in info_jugadores if j["dado"] == maximo]
+        v.resolver_empates(empatados)
 
     #   Ciclo para leer los dados y captar al jugador que tiro mejor
     for jug in info_jugadores:
@@ -59,10 +70,13 @@ def decidir_orden(list_jug):
             dado_ganador = jug["dado"]
             ganador = jug
 
-        print("dados ordenados al final")
-        print(info_jugadores)
-        print(ganador)
-        print(f"El jugador {ganador["nombre"]} gano la ronda!. Comenzara primero")
+    # Ordena los jugadores de mayor a menor puntuacion de dado, listo para comenzar el primer turno
+    info_jugadores.sort(key=lambda j: j["dado"],reverse=True)
+    print("< < < < < < - - - - - - - - - - - - - - - - > > > > > >")
+    print(f"      El jugador {ganador["nombre"]} gano la ronda!. Comenzara primero")
+    print("< < < < < < - - - - - - - - - - - - - - - - > > > > > >")
+    return info_jugadores
+
 
 '''
     print('Tira los dados para decidir quien va primero! El que tenga la suma mas grande comienza!')
@@ -102,7 +116,6 @@ def decidir_orden(list_jug):
         else:
             print('Empate. (Que suerte! O no) Tiren de nuevo.')
         time.sleep(2)
-
 '''
 
 
@@ -161,23 +174,40 @@ def tirar_dados_viejo(): # creo que tendria que rehacerse este
         if todos_conservados: break
     return resultados_final
 
-'''
-lista = [
-    {
-        "nombre": "Lucas",
-        "puntaje": 0,
-        "puntaje total": 0
-    },
-    {
-        "nombre": "Eze",
-        "puntaje": 0,
-        "puntaje total": 0
-    },
-    {
-        "nombre": "Jave",
-        "puntaje": 0,
-        "puntaje total": 0
-    }
-]
-'''
-#decidir_orden(lista)
+
+# Funcion central para determinar el ganador de la partida
+# Se encarga de los turnos de todos los jugadores a traves de un ciclo
+def turno_jugadores(list_jug):
+
+    for ronda in range(1,11):
+        print(f"Ronda {ronda}")
+        for jugador in list_jug:
+            #   Muestra que es el turno del jugador
+            print(f"Turno de {jugador["nombre"]}")
+            #   Muestra que es el primer tiro
+            #   Input para presionar enter 
+            #   1° Tirar los 5 dados y mostrarlos en consola
+            #   Mostrar tablero
+            #   Consultar en un input cuales posiciones de dados va a elegir quedarse
+            #   
+            #   Muestra que es el segundo tiro
+            #   Input para presionar enter  
+            #   2° Tirar los dados restantes a los que conservo
+            #   Mostrar tablero
+            #   Volver a consultar cuales conservara
+            #  
+            #   Muestra que es el tercer tiro
+            #   Input para presionar enter
+            #   Mostrar tablero
+            #   3° Tirar los dados restantes a los que conservo
+
+            #   evaluar los dados, con las jugadas posibles
+            #   Mostrar tablero
+            #   consultar que anotara el jugador
+            #   guardarlo los datos y actualizar
+
+            #   fin de turno jugador 
+            pass
+
+# Prueba practica hasta que funcione 
+#turno_jugadores([])

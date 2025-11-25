@@ -5,12 +5,7 @@ import modulos.datos.registrar_jug_en_partida as r
 
 nombre_archivo_jugadores = "./json/jugadores.json"
 
-
-def comenzar_ronda():
-    turno_contador = 1
-
-    dados_conservados = [0] * 6
-
+def principio_juego():
     #   comienza la ronda
     #   se piden los jugadores que desean jugar
     cant_jugadores = v.validar_cant_jugadores_es_digito_y_entero()
@@ -18,13 +13,21 @@ def comenzar_ronda():
     #   se pide el nombre de cada jugador
     jugadores = r.registrar_jugador(cant_jugadores,nombre_archivo_jugadores)
     #   una vez ingresen los nombres, cada uno se guarda en un diccionario
-    print(jugadores)
 
     #   una vez guarda los nombres de cada jugador, comienza a tirar cada uno un dado
-    j.decidir_orden(jugadores)
+    lista_jug_ordenadas = j.decidir_orden(jugadores)
+    return lista_jug_ordenadas
+
+
+def comenzar_juego():
+    turno_contador = 1
+    dados_conservados = [0] * 6
 
     #   el que saca mayor puntuacion es el que comienza primero
-    #   se ordenan los jugadores para la ronda y comienza el jugador 1
+    #   se ordenan los jugadores para la ronda y comienza el jugador con mas puntuacion de dado
+    lista_jug_ordenada = principio_juego()
+
+    j.turno_jugadores(lista_jug_ordenada)
 
     #   Tiro 1
     #   *loop*
@@ -56,4 +59,4 @@ def comenzar_ronda():
 #    else:
 #        print('a')
 
-comenzar_ronda()
+#comenzar_ronda()

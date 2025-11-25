@@ -1,5 +1,6 @@
 import random
-
+import time
+import modulos.logica_juego.juego_funciones as p
 
 # Valida si es un numero
 def validar_numero(texto):
@@ -29,19 +30,30 @@ def validar_cant_jugadores_es_digito_y_entero() -> int:
 def resolver_empates(dados_jugadores):
     # Mientras haya dados repetidos, seguir intentando
     while True:
-        # obtengo todos los valores de dado
         valores = [j["dado"] for j in dados_jugadores]
+        # obtengo todos los valores de dado
 
-        # si NO hay repetidos, listo
+        # si no hay repetidos, listo
         if len(valores) == len(set(valores)):
             return dados_jugadores   # no hay empate
 
+        print("Hay empate!!. Tiren los dados nuevamente.")
         # si hay repetidos, re-tiro para los que empataron
         for i in range(len(dados_jugadores)):
             for j in range(i + 1, len(dados_jugadores)):
                 if dados_jugadores[i]["dado"] == dados_jugadores[j]["dado"]:
                     # empate → ambos vuelven a tirar
+                    
                     print(f"Tira el jugador {dados_jugadores[i]["nombre"]}")
+                    input("Presione enter para tirar el dado.")
                     dados_jugadores[i]["dado"] = random.randint(1, 6)
+                    time.sleep(1)
+                    p.print_dados([dados_jugadores[i]["dado"]])
+                    print()
+
                     print(f"Tira el jugador {dados_jugadores[j]["nombre"]}")
+                    input("Presione enter para tirar el dado.")
                     dados_jugadores[j]["dado"] = random.randint(1, 6)
+                    time.sleep(1)
+                    p.print_dados([dados_jugadores[j]["dado"]])
+                    print()

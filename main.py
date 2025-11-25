@@ -1,6 +1,6 @@
+import modulos.juego_estado as juego
 
 juegos_finalizados = 0
-
 while True:
     mensaje_info =print("""
 ================
@@ -15,8 +15,7 @@ Opciones:
     opcion = int(input('Su opcion: '))
         
     if opcion == 1: 
-        import modulos.juego_estado as juego
-        juego.comenzar_ronda()
+        juego.comenzar_juego()
         juegos_finalizados += 1
     elif opcion == 2:
         print(f'Jugo {juegos_finalizados} juegos')
