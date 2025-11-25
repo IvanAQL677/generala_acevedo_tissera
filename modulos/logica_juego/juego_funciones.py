@@ -2,6 +2,7 @@ import random
 import json
 import os
 import time
+import modulos.validaciones.valids as v
 
 def cargar_categorias():
     if not os.path.exists('json/categorias.json'):
@@ -30,7 +31,40 @@ def print_dados(dados, total):
     print()
 
 
-def decidir_orden():
+def decidir_orden(list_jug):
+    # cada jugador tira un dado y se guardan en un diccionario, dentro de una lista
+    # se evaluan los valores de cada dado y el mayor numero sera el primero
+    # se muestra quien gano y comienza a tirar los dados
+    info_jugadores = []
+    dado_ganador = 0
+    ganador = {}
+
+    #   Ciclo para que cada jugador tire un dado y quede guardado su nombre y dado
+    for jug in list_jug:
+        tirada = input(f"Turno de {jug["nombre"]}.Presione enter para tirar los dados.")
+        time.sleep(1)
+        # Hacer evento para tocar enter y tirar los dados
+        dado = random.randint(1,6)
+        datos_jug = {
+            "nombre" : jug["nombre"],
+            "dado" : 1
+        }
+        info_jugadores.append(datos_jug)
+    
+    v.resolver_empates(info_jugadores)
+
+    #   Ciclo para leer los dados y captar al jugador que tiro mejor
+    for jug in info_jugadores:
+        if jug["dado"] > dado_ganador:
+            dado_ganador = jug["dado"]
+            ganador = jug
+
+        print("dados ordenados al final")
+        print(info_jugadores)
+        print(ganador)
+        print(f"El jugador {ganador["nombre"]} gano la ronda!. Comenzara primero")
+
+'''
     print('Tira los dados para decidir quien va primero! El que tenga la suma mas grande comienza!')
     while True:
         lanzar = input('Lanza los dados con enter!')
@@ -69,6 +103,9 @@ def decidir_orden():
             print('Empate. (Que suerte! O no) Tiren de nuevo.')
         time.sleep(2)
 
+'''
+
+
 def tirar_dados(conservados):
     lanzar = input('Lanza los dados con Enter!')
     resultados = []
@@ -80,11 +117,8 @@ def tirar_dados(conservados):
     return resultados
 
 
-
-
-
-
 def tirar_dados_viejo(): # creo que tendria que rehacerse este
+
     resultados_final = [0] * 5
     resultados_conservar = [False] * 5
 
@@ -126,3 +160,24 @@ def tirar_dados_viejo(): # creo que tendria que rehacerse este
                 break
         if todos_conservados: break
     return resultados_final
+
+'''
+lista = [
+    {
+        "nombre": "Lucas",
+        "puntaje": 0,
+        "puntaje total": 0
+    },
+    {
+        "nombre": "Eze",
+        "puntaje": 0,
+        "puntaje total": 0
+    },
+    {
+        "nombre": "Jave",
+        "puntaje": 0,
+        "puntaje total": 0
+    }
+]
+'''
+#decidir_orden(lista)

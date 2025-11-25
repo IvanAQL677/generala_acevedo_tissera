@@ -1,15 +1,21 @@
-# import jorjojyyojy as j
 
-import modulos.juego_estado as juego
-
-mensaje_info = "===========\nGENERALA\n=========== \nOpciones: \n\t1) Jugar \n\t2)Estadisticas \n\t3)Creditos \n\t4)Crear archivos json \n\t5) Salir"
 juegos_finalizados = 0
 
 while True:
-    print(mensaje_info)
+    mensaje_info =print("""
+================
+    GENERALA
+================
+Opciones: 
+1)Jugar. 
+2)Estadisticas. 
+3)Creditos. 
+4)Crear archivos json. 
+5) Salir""")
     opcion = int(input('Su opcion: '))
         
     if opcion == 1: 
+        import modulos.juego_estado as juego
         juego.comenzar_ronda()
         juegos_finalizados += 1
     elif opcion == 2:
