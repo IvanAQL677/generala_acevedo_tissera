@@ -19,6 +19,7 @@ def cargar_categorias():
             print(f"{key}: name={name}, sum_type={sum_type}, default_score={default_score}")
         return categorias_lista
 
+
 # Funcion que solo funciona para printear dados que vayan tirando durante el juego
 def print_dados(dados):
     for i in dados:
@@ -31,6 +32,8 @@ def print_dados(dados):
     #print(f' = {total} TOTAL')
     for i in dados:
         print(f"└───┘", end="  ")
+    print()
+
 
 def decidir_orden(list_jug):
     # cada jugador tira un dado y se guardan en un diccionario, dentro de una lista
@@ -54,7 +57,7 @@ def decidir_orden(list_jug):
         print_dados([dado])
         print()
     
-    # Si no hay repetidos, saltea la funcion
+    # Si no hay repetidos, saltea el condicional
     valores = [j["dado"] for j in info_jugadores]
     if len(valores) == len(set(valores)):
         pass # no hay empate
@@ -75,6 +78,7 @@ def decidir_orden(list_jug):
     print("< < < < < < - - - - - - - - - - - - - - - - > > > > > >")
     print(f"      El jugador {ganador["nombre"]} gano la ronda!. Comenzara primero")
     print("< < < < < < - - - - - - - - - - - - - - - - > > > > > >")
+
     return info_jugadores
 
 
@@ -118,17 +122,36 @@ def decidir_orden(list_jug):
         time.sleep(2)
 '''
 
+def elegir_conservados(dados):
 
-def tirar_dados(conservados):
-    lanzar = input('Lanza los dados con Enter!')
-    resultados = []
-    for i in range(5):
-        if conservados[i]:
-            resultados[i] = 0
-            continue
-        resultados[i] = random.randint(1, 6)
-    return resultados
+    eleccion = input("Ingrese las posiciones de los dados que desea conservar.(separados por espacios)")
 
+    if eleccion.strip() == "":
+        return [] # No conservo ninguno
+    
+    indices = [int(x) - 1 for x in eleccion.split()]
+    return indices
+
+def aplicar_conservados_y_tirar(dados_actuales, indices_conservados):
+    """
+    dados_actuales: lista de 5 valores
+    indices_conservados: lista de índices (base 0) que se conservan
+    Devuelve la lista resultante (misma longitud), donde los no conservados
+    han sido re-tirados.
+    """
+    n = len(dados_actuales)
+    # cuántos hay que tirar
+    faltan = [i for i in range(n) if i not in indices_conservados]
+    nuevos = tirar_dados(len(faltan))
+
+    resultado = dados_actuales.copy()
+    for idx_pos, pos in enumerate(faltan):
+        resultado[pos] = nuevos[idx_pos]
+    return resultado
+
+
+def tirar_dados(n):
+        return [random.randint(1, 6) for _ in range(n)]
 
 def tirar_dados_viejo(): # creo que tendria que rehacerse este
 
@@ -174,7 +197,6 @@ def tirar_dados_viejo(): # creo que tendria que rehacerse este
         if todos_conservados: break
     return resultados_final
 
-
 # Funcion central para determinar el ganador de la partida
 # Se encarga de los turnos de todos los jugadores a traves de un ciclo
 def turno_jugadores(list_jug):
@@ -183,9 +205,36 @@ def turno_jugadores(list_jug):
         print(f"Ronda {ronda}")
         for jugador in list_jug:
             #   Muestra que es el turno del jugador
-            print(f"Turno de {jugador["nombre"]}")
-            #   Muestra que es el primer tiro
-            #   Input para presionar enter 
+            #print("< < < < - - - - - - - - - - - - - - - - > > > >")
+            print(f"\t\tTurno de {jugador["nombre"]}")
+            #print("< < < < - - - - - - - - - - - - - - - - > > > >")
+            
+            # PRIMER TIRO
+            input("Presione enter para el tiro 1")
+            time.sleep(2)
+            dados = tirar_dados(5)
+            print("Primer Tiro:")
+            print_dados(dados)
+
+            #elige los dados que conservara por su posicion
+            conservados = elegir_conservados(dados)
+
+            # SEGUNDO TIRO
+            input("Presione enter para el tiro 2")
+            time.sleep(2)
+            dados = aplicar_conservados_y_tirar(dados, conservados)
+            print("Segundo Tiro:")
+            print_dados(dados)
+
+            conservados = elegir_conservados(dados)
+
+            # ===== TERCER TIRO =====
+            input("Presione enter para el tiro 3")
+            time.sleep(2)
+            dados = aplicar_conservados_y_tirar(dados, conservados)
+            print("Tercer tiro:")
+            print_dados(dados)
+
             #   1° Tirar los 5 dados y mostrarlos en consola
             #   Mostrar tablero
             #   Consultar en un input cuales posiciones de dados va a elegir quedarse
@@ -207,7 +256,25 @@ def turno_jugadores(list_jug):
             #   guardarlo los datos y actualizar
 
             #   fin de turno jugador 
-            pass
+            
 
 # Prueba practica hasta que funcione 
-#turno_jugadores([])
+
+'''
+turno_jugadores([{
+    "nombre" : "Lucas"
+},{
+    "nombre" : "Juan"
+}])
+'''
+
+'''
+tirada = tirar_dados(5)
+print(tirada)
+
+
+# 2) Elegir conservados
+conservados = elegir_conservados(tirada)
+
+print(conservados)
+'''
