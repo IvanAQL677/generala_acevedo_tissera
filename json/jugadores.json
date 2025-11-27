@@ -1,7 +1,34 @@
 [
     {
-        "nombre": "glog",
-        "puntaje": 0,
+        "nombre": "Lucas",
+        "puntos": {
+            "unos": 0,
+            "doses": 0,
+            "Treses": 0,
+            "cuatros": 0,
+            "cincos": 0,
+            "seises": 0,
+            "escalera": 0,
+            "full": 0,
+            "poker": 0,
+            "generala": 0
+        },
+        "puntaje total": 0
+    },
+    {
+        "nombre": "Juan",
+        "puntos": {
+            "unos": 0,
+            "doses": 0,
+            "Treses": 0,
+            "cuatros": 0,
+            "cincos": 0,
+            "seises": 0,
+            "escalera": 0,
+            "full": 0,
+            "poker": 0,
+            "generala": 0
+        },
         "puntaje total": 0
     }
 ]

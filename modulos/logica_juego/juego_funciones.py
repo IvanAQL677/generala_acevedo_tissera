@@ -37,9 +37,10 @@ def decidir_orden(list_jug):
     dado_ganador = 0
     ganador = {}
     print("<<<<<<------ Tiren los dados para decidir quien sera el que comienze el juego. ------>>>>>>")
+
     #   Ciclo para que cada jugador tire un dado y quede guardado su nombre y dado
     for jug in list_jug:
-        tirada = input(f"Turno de {jug["nombre"]}. Presione enter para tirar los dados.")
+        input(f"Turno de {jug["nombre"]}. Presione enter para tirar los dados.")
         time.sleep(1)
         # Hacer evento para tocar enter y tirar los dados
         dado = random.randint(1,6)
@@ -53,10 +54,8 @@ def decidir_orden(list_jug):
     
     # Si no hay repetidos, saltea el condicional
     valores = [j["dado"] for j in info_jugadores]
-    if len(valores) == len(set(valores)):
-        pass # no hay empate
-    else:
-        #   Envia solo los dados en empate y no todos los dados
+    if len(valores) != len(set(valores)):
+        #   Envia solo los dados en empate con el mayor numero de todos
         maximo = max(j["dado"] for j in info_jugadores)
         empatados = [j for j in info_jugadores if j["dado"] == maximo]
         v.resolver_empates(empatados)
@@ -76,22 +75,17 @@ def decidir_orden(list_jug):
     return info_jugadores
 
 def elegir_conservados(dados):
-
     eleccion = input("Ingrese las posiciones de los dados que desea conservar.(separados por espacios)")
-
     if eleccion.strip() == "":
         return [] # No conservo ninguno
-    
     indices = [int(x) - 1 for x in eleccion.split()]
     return indices
 
 def aplicar_conservados_y_tirar(dados_actuales, indices_conservados):
-    """
-    dados_actuales: lista de 5 valores
-    indices_conservados: lista de índices (base 0) que se conservan
-    Devuelve la lista resultante (misma longitud), donde los no conservados
-    han sido re-tirados.
-    """
+    #   dados_actuales: lista de 5 valores
+    #   indices_conservados: lista de índices (base 0) que se conservan
+    #   Devuelve la lista resultante (misma longitud), donde los no conservados
+    #   han sido re-tirados.
     n = len(dados_actuales)
     # cuántos hay que tirar
     faltan = [i for i in range(n) if i not in indices_conservados]
@@ -102,7 +96,6 @@ def aplicar_conservados_y_tirar(dados_actuales, indices_conservados):
         resultado[pos] = nuevos[idx_pos]
     return resultado
 
-
 def tirar_dados(n):
         return [random.randint(1, 6) for _ in range(n)]
 
@@ -112,27 +105,35 @@ def turno_jugadores(rondas, list_jug, categorias):
     print(f"Ronda {rondas}")
     for jugador in list_jug:
         #   Muestra que es el turno del jugador
-        #print("< < < < - - - - - - - - - - - - - - - - > > > >")
+        print("< < < < - - - - - - - - - - - - - - - - > > > >")
         print(f"\t\tTurno de {jugador["nombre"]}")
-        #print("< < < < - - - - - - - - - - - - - - - - > > > >")
-        
-        # PRIMER TIRO
+        print("< < < < - - - - - - - - - - - - - - - - > > > >")
+
+        # ===== PRIMER TIRO =====
         input("Presione enter para el tiro 1")
         time.sleep(2)
         dados = tirar_dados(5)
         print("Primer Tiro:")
         print_dados(dados)
 
+        #   Mostrar tablero
+
+
+
         #elige los dados que conservara por su posicion
         conservados = elegir_conservados(dados)
 
-        # SEGUNDO TIRO
+        # ===== SEGUNDO TIRO =====
         input("Presione enter para el tiro 2")
         time.sleep(2)
         dados = aplicar_conservados_y_tirar(dados, conservados)
         print("Segundo Tiro:")
         print_dados(dados)
 
+        #   Mostrar tablero
+        
+        
+        
         conservados = elegir_conservados(dados)
 
         # ===== TERCER TIRO =====
@@ -142,27 +143,12 @@ def turno_jugadores(rondas, list_jug, categorias):
         print("Tercer tiro:")
         print_dados(dados)
 
-        #   1° Tirar los 5 dados y mostrarlos en consola
         #   Mostrar tablero
-        #   Consultar en un input cuales posiciones de dados va a elegir quedarse
-        #   
-        #   Muestra que es el segundo tiro
-        #   Input para presionar enter  
-        #   2° Tirar los dados restantes a los que conservo
-        #   Mostrar tablero
-        #   Volver a consultar cuales conservara
-        #  
-        #   Muestra que es el tercer tiro
-        #   Input para presionar enter
-        #   Mostrar tablero
-        #   3° Tirar los dados restantes a los que conservo
+        
 
-        #   evaluar los dados, con las jugadas posibles
-        #   Mostrar tablero
-        #   consultar que anotara el jugador
-        #   guardarlo los datos y actualizar
 
-        #   fin de turno jugador 
+        
+        #   Mostrar tablero
 
         tabla_puntajes = puntajes_disponibles(dados, categorias)
 
@@ -171,7 +157,8 @@ def turno_jugadores(rondas, list_jug, categorias):
             print(f'-- {i+1}. {categorias[i]['Nombre']}: {tabla_puntajes[i]}')
 
         puntos = elegir_categoria(tabla_puntajes, categorias) # cambia esto despues con un verdadero modelo para los puntos asi se aplica bien
-            
+
+
 def puntajes_disponibles(dados, categorias):
     resultados = [0] * len(categorias)
 
@@ -187,7 +174,7 @@ def puntajes_disponibles(dados, categorias):
         
         elif categoria["Tipo"] == 'estatico' and categoria["Puntaje"].isdigit():
             # Secuencia. se ordenan los dados de menor a mayor (salteando el primero)
-        # si uno NO es 1 mayor que el anterior, se pone es_secuencia = false y queda como 0
+            # si uno NO es 1 mayor que el anterior, se pone es_secuencia = false y queda como 0
             if categoria["Requerimiento"] == 'secuencia':
                 valores_ordenados = sorted(dados)
                 es_secuencia = True
@@ -247,12 +234,13 @@ def puntajes_disponibles(dados, categorias):
     return resultados
 
 def elegir_categoria(puntajes, categorias) -> int:
-    # se ingresa una eleccion. despues se fija si es un numero valido y se regresa con el index correcto
+    # se ingresa una eleccion. despues se fija si es un numero valido y sel regresa con el index correcto
     while True:
         eleccion = input('Elija una categoria (Puede ser su numero o su nombre): ')
         if eleccion.isdigit() and 0 < int(eleccion) <= len(categorias):
             index = int(eleccion)-1
             print(f'Elegiste la categoria {eleccion}. {categorias[index]["Nombre"]}')
+
             return int(puntajes[index])
         else:
             for i in range(len(categorias)):
@@ -260,26 +248,3 @@ def elegir_categoria(puntajes, categorias) -> int:
                     print(f'Elegiste la categoria {i+1}. {categorias[i]}')
                     return int(puntajes[i])
         print('Error, opcion invalida o no encontrada.')
-
-
-
-# Prueba practica hasta que funcione 
-
-'''
-turno_jugadores([{
-    "nombre" : "Lucas"
-},{
-    "nombre" : "Juan"
-}])
-'''
-
-'''
-tirada = tirar_dados(5)
-print(tirada)
-
-
-# 2) Elegir conservados
-conservados = elegir_conservados(tirada)
-
-print(conservados)
-'''

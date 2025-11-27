@@ -30,26 +30,7 @@ def comenzar_juego():
     rondas = 1
 
     for i in range(len(categorias)):
-        j.turno_jugadores(rondas, lista_jug_ordenada, categorias)
-        rondas += 1
-
-    #   Tiro 1
-    #   *loop*
-    #   verificar si hay dados conservados y restarlos del total de dados 
-    #   tirar los dados restantes
-    #   guardar los dados en una lista y mostrar al usuario
-    #   preguntar que posicion de dado quiere guardar y mostrar la Tabla de puntos
-    #   validar que lo que elija el jugador este libre para anotar   
-    #   guarda los dados conservados y los retorna
-    #   *loop*
-
-    #   Tiro 2
-    #   lo mismo que el tiro 1
-    #   Tiro 3
-    #   lo mismo que el tiro 1
-
-    #   al finalizar los tiros, mostrar la tabla y las opciones de anotacion
-    #   preguntar al jugador que desea anotar en base a las opciones que le han tocado
-    #   se guarda la opcion, se actualiza en la tabla y se guarda 
+            j.turno_jugadores(rondas, lista_jug_ordenada, categorias)
+            rondas += 1
 
     print('EMPIEZA !')
