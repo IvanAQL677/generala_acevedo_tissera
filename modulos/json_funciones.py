@@ -4,6 +4,20 @@ import os
 # todos se ponen como default si se pone vacio para que no se tenga que escribir todo manualmente 10 veces
 # por eso hay muchas condicionales donde es ''
 
+def cargar_json(archivo):
+    if os.path.exists(archivo):
+        with open(archivo, "r", encoding="utf-8") as ar:
+            lista_json = json.load(ar) 
+            return lista_json
+    print(f'Archivo en "{archivo}" no encontrado.')
+    default = { # default si no hay nada
+        "Nombre": "Uno",
+        "Tipo": "suma",
+        "Requerimiento": "1",
+        "Puntaje": "ninguno"} * 3
+    return default
+
+
 def ingresar_categoria(default:str):
     while True:
         tipo = input('Elige un tipo de categoria. 1 para suma, 2 para puntos estaticos. (E.J. Unos es la suma de todos los unos, Generala siempre es 50.): ').strip()

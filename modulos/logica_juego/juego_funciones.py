@@ -11,12 +11,6 @@ def cargar_categorias():
         return [] 
     with open('json/categorias.json', 'r', encoding="utf-8")  as info:
         categorias_lista = json.load(info)
-        for key, value in categorias_lista.items():
-            name = value.get("nombre")
-            sum_type = value.get("tipo de suma")
-            default_score = value.get("puntaje default")
-            
-            print(f"{key}: name={name}, sum_type={sum_type}, default_score={default_score}")
         return categorias_lista
 
 
@@ -81,47 +75,6 @@ def decidir_orden(list_jug):
 
     return info_jugadores
 
-
-'''
-    print('Tira los dados para decidir quien va primero! El que tenga la suma mas grande comienza!')
-    while True:
-        lanzar = input('Lanza los dados con enter!')
-        oponente_tiro = []
-        jugador_tiro = []
-        oponente_resultado = 0
-        jugador_resultado = 0
-        
-        for i in range(5):
-            oponente_tiro.append(random.randint(1, 6))
-            jugador_tiro.append(random.randint(1, 6))
-
-        for i in range(5):
-            oponente_resultado += oponente_tiro[i-1]
-            jugador_resultado += jugador_tiro[i-1]
-
-        print('################/RESULTADOS/################')
-        print('#### Jugador: ')
-        print_dados(jugador_tiro, jugador_resultado)
-        print('Oponente esta tirando...')
-        time.sleep(2)
-
-        
-        print('#### Oponente: ')
-        print_dados(oponente_tiro, oponente_resultado)
-        time.sleep(2)
-
-        
-        if oponente_resultado > jugador_resultado:
-            print('Comienza el oponente!')
-            return False
-        elif oponente_resultado < jugador_resultado:
-            print('Comienza el jugador!')
-            return True
-        else:
-            print('Empate. (Que suerte! O no) Tiren de nuevo.')
-        time.sleep(2)
-'''
-
 def elegir_conservados(dados):
 
     eleccion = input("Ingrese las posiciones de los dados que desea conservar.(separados por espacios)")
@@ -153,110 +106,162 @@ def aplicar_conservados_y_tirar(dados_actuales, indices_conservados):
 def tirar_dados(n):
         return [random.randint(1, 6) for _ in range(n)]
 
-def tirar_dados_viejo(): # creo que tendria que rehacerse este
-
-    resultados_final = [0] * 5
-    resultados_conservar = [False] * 5
-
-    for i in range(3):
-        lanzar = input('Lanza los dados con Enter!')
-        resultados = [0] * 5
-
-        # se saltea las posiciones que se hayan guardado y se genera un numero entre 1 y 6
-        # se copia los que se hayan guardado a resultado[] para que el print no se tenga que complicar
-        for j in range(5):
-            if resultados_conservar[j]: 
-                resultados[j] = resultados_final[j]
-                continue
-            resultados[j] = random.randint(1, 6)
-        
-        print(f'<<< TURNO JUGADOR - TIRO {i+1} DE 3 >>>')
-        print('----------------------')
-        print(f'----DADOS ACTUALES----')
-        print(f'\tPosicion: (1\t)|(2\t)|(3\t)|(4\t)|(5\t)')
-        print(f'\tSimbolo: PLACEHOLDER AAAAAH')
-        print(f'\tValor:   {resultados[0]}\t|  {resultados[1]}\t|  {resultados[2]}\t|  {resultados[3]}\t|  {resultados[4]}')
-
-        # valor para elegir si saltear o no
-        # se usa .strip para sacar los espacios
-        guardar = input('Elija los numeros a conservar (separados por comas, ejemplo: 1, 3, 5): ')
-        for j in guardar.split(','):
-            item = j.strip()
-            if item.isdigit():
-                item = int(item)
-                if item > 0 and item < 6:
-                    resultados_conservar[item-1] = True
-                    if resultados_final[item-1] == 0:
-                        resultados_final[item-1] = resultados[item-1]
-        
-        todos_conservados = True
-        for j in resultados_conservar:
-            if not j:
-                todos_conservados = False
-                break
-        if todos_conservados: break
-    return resultados_final
-
 # Funcion central para determinar el ganador de la partida
 # Se encarga de los turnos de todos los jugadores a traves de un ciclo
-def turno_jugadores(list_jug):
+def turno_jugadores(rondas, list_jug, categorias):
+    print(f"Ronda {rondas}")
+    for jugador in list_jug:
+        #   Muestra que es el turno del jugador
+        #print("< < < < - - - - - - - - - - - - - - - - > > > >")
+        print(f"\t\tTurno de {jugador["nombre"]}")
+        #print("< < < < - - - - - - - - - - - - - - - - > > > >")
+        
+        # PRIMER TIRO
+        input("Presione enter para el tiro 1")
+        time.sleep(2)
+        dados = tirar_dados(5)
+        print("Primer Tiro:")
+        print_dados(dados)
 
-    for ronda in range(1,11):
-        print(f"Ronda {ronda}")
-        for jugador in list_jug:
-            #   Muestra que es el turno del jugador
-            #print("< < < < - - - - - - - - - - - - - - - - > > > >")
-            print(f"\t\tTurno de {jugador["nombre"]}")
-            #print("< < < < - - - - - - - - - - - - - - - - > > > >")
+        #elige los dados que conservara por su posicion
+        conservados = elegir_conservados(dados)
+
+        # SEGUNDO TIRO
+        input("Presione enter para el tiro 2")
+        time.sleep(2)
+        dados = aplicar_conservados_y_tirar(dados, conservados)
+        print("Segundo Tiro:")
+        print_dados(dados)
+
+        conservados = elegir_conservados(dados)
+
+        # ===== TERCER TIRO =====
+        input("Presione enter para el tiro 3")
+        time.sleep(2)
+        dados = aplicar_conservados_y_tirar(dados, conservados)
+        print("Tercer tiro:")
+        print_dados(dados)
+
+        #   1° Tirar los 5 dados y mostrarlos en consola
+        #   Mostrar tablero
+        #   Consultar en un input cuales posiciones de dados va a elegir quedarse
+        #   
+        #   Muestra que es el segundo tiro
+        #   Input para presionar enter  
+        #   2° Tirar los dados restantes a los que conservo
+        #   Mostrar tablero
+        #   Volver a consultar cuales conservara
+        #  
+        #   Muestra que es el tercer tiro
+        #   Input para presionar enter
+        #   Mostrar tablero
+        #   3° Tirar los dados restantes a los que conservo
+
+        #   evaluar los dados, con las jugadas posibles
+        #   Mostrar tablero
+        #   consultar que anotara el jugador
+        #   guardarlo los datos y actualizar
+
+        #   fin de turno jugador 
+
+        tabla_puntajes = puntajes_disponibles(dados, categorias)
+
+        print('---------Tabla de puntajes!--------')
+        for i in range(len(categorias)):
+            print(f'-- {i+1}. {categorias[i]['Nombre']}: {tabla_puntajes[i]}')
+
+        puntos = elegir_categoria(tabla_puntajes, categorias) # cambia esto despues con un verdadero modelo para los puntos asi se aplica bien
             
-            # PRIMER TIRO
-            input("Presione enter para el tiro 1")
-            time.sleep(2)
-            dados = tirar_dados(5)
-            print("Primer Tiro:")
-            print_dados(dados)
+def puntajes_disponibles(dados, categorias):
+    resultados = [0] * len(categorias)
 
-            #elige los dados que conservara por su posicion
-            conservados = elegir_conservados(dados)
+    for i in range(len(categorias)):
+        categoria = categorias[i]
+        if categoria["Tipo"] == 'suma':
+            # las sumas. se itera por todos los dados y si el requerimiento es un digito (para no crashear) y el dado es igual al requerimiento, se suma al resultado
+            resultado_suma = 0
+            for j in dados:
+                if categoria["Requerimiento"].isdigit() and j == int(categoria["Requerimiento"]):
+                    resultado_suma += j
+            resultados[i] = resultado_suma
+        
+        elif categoria["Tipo"] == 'estatico' and categoria["Puntaje"].isdigit():
+            # Secuencia. se ordenan los dados de menor a mayor (salteando el primero)
+        # si uno NO es 1 mayor que el anterior, se pone es_secuencia = false y queda como 0
+            if categoria["Requerimiento"] == 'secuencia':
+                valores_ordenados = sorted(dados)
+                es_secuencia = True
+                for j in range(1, len(valores_ordenados)):
+                    if valores_ordenados[j] != valores_ordenados[j-1] + 1:
+                        es_secuencia = False
+                        break
+                if es_secuencia:
+                    resultados[i] = int(categoria["Puntaje"])
+                else:
+                    resultados[i] = 0
 
-            # SEGUNDO TIRO
-            input("Presione enter para el tiro 2")
-            time.sleep(2)
-            dados = aplicar_conservados_y_tirar(dados, conservados)
-            print("Segundo Tiro:")
-            print_dados(dados)
+            elif categoria["Requerimiento"] == '2 y 3' or categoria["Requerimiento"] == '4 y 1':
+                # se ordena y se hace un diccionario 'conteos' donde se añade cada numero nuevo. si no esta en conteos se lo añade, y si ya esta se le suma 1 a la cantidad 
+                conteos = {}
+                for j in dados:
+                    if j in conteos:
+                        conteos[j] += 1
+                    else:
+                        conteos[j] = 1
+                # se itera por cada valor en conteos para ver si tiene la cantidad
+                hay_3 = False
+                hay_2 = False
+                hay_4 = False
+                for j in conteos.values():
+                    if j == 3:
+                        hay_3 = True
+                    elif j == 2:
+                        hay_2 =  True
+                    elif j == 4:
+                        hay_4 = True
+                
+                # condicionales para añadir el puntaje o no
+                if categoria["Requerimiento"] == '2 y 3':
+                    if hay_3 and hay_2:
+                        resultados[i] = int(categoria["Puntaje"])
+                    else:
+                        resultados[i] = 0
+                elif categoria["Requerimiento"] == '4 y 1':
+                    if hay_4:
+                        resultados[i] = int(categoria["Puntaje"])
+                    else:
+                        resultados[i] = 0
 
-            conservados = elegir_conservados(dados)
-
-            # ===== TERCER TIRO =====
-            input("Presione enter para el tiro 3")
-            time.sleep(2)
-            dados = aplicar_conservados_y_tirar(dados, conservados)
-            print("Tercer tiro:")
-            print_dados(dados)
-
-            #   1° Tirar los 5 dados y mostrarlos en consola
-            #   Mostrar tablero
-            #   Consultar en un input cuales posiciones de dados va a elegir quedarse
-            #   
-            #   Muestra que es el segundo tiro
-            #   Input para presionar enter  
-            #   2° Tirar los dados restantes a los que conservo
-            #   Mostrar tablero
-            #   Volver a consultar cuales conservara
-            #  
-            #   Muestra que es el tercer tiro
-            #   Input para presionar enter
-            #   Mostrar tablero
-            #   3° Tirar los dados restantes a los que conservo
-
-            #   evaluar los dados, con las jugadas posibles
-            #   Mostrar tablero
-            #   consultar que anotara el jugador
-            #   guardarlo los datos y actualizar
-
-            #   fin de turno jugador 
+            # si se encuentra uno diferente se pone como falso
+            elif categoria["Requerimiento"] == 'todos':
+                todos_iguales = True
+                for j in range(1, len(dados)):
+                    if dados[j] != dados[j-1]:
+                        todos_iguales = False
+                        break
+                if todos_iguales:
+                    resultados[i] = int(categoria["Puntaje"])
+                else:
+                    resultados[i] = 0
             
+    return resultados
+
+def elegir_categoria(puntajes, categorias) -> int:
+    # se ingresa una eleccion. despues se fija si es un numero valido y se regresa con el index correcto
+    while True:
+        eleccion = input('Elija una categoria (Puede ser su numero o su nombre): ')
+        if eleccion.isdigit() and 0 < int(eleccion) <= len(categorias):
+            index = int(eleccion)-1
+            print(f'Elegiste la categoria {eleccion}. {categorias[index]["Nombre"]}')
+            return int(puntajes[index])
+        else:
+            for i in range(len(categorias)):
+                if categorias[i]["Nombre"].lower() == eleccion.lower():
+                    print(f'Elegiste la categoria {i+1}. {categorias[i]}')
+                    return int(puntajes[i])
+        print('Error, opcion invalida o no encontrada.')
+
+
 
 # Prueba practica hasta que funcione 
 

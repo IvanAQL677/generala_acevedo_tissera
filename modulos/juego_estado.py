@@ -20,14 +20,18 @@ def principio_juego():
 
 
 def comenzar_juego():
+    categorias = j.cargar_categorias()
     turno_contador = 1
     dados_conservados = [0] * 6
 
     #   el que saca mayor puntuacion es el que comienza primero
     #   se ordenan los jugadores para la ronda y comienza el jugador con mas puntuacion de dado
     lista_jug_ordenada = principio_juego()
+    rondas = 1
 
-    j.turno_jugadores(lista_jug_ordenada)
+    for i in range(len(categorias)):
+        j.turno_jugadores(rondas, lista_jug_ordenada, categorias)
+        rondas += 1
 
     #   Tiro 1
     #   *loop*
@@ -49,14 +53,3 @@ def comenzar_juego():
     #   se guarda la opcion, se actualiza en la tabla y se guarda 
 
     print('EMPIEZA !')
-
-#    
-
-#    if turno_jugador:
-        #fun.tirar_dados()
-
-#        print('a')
-#    else:
-#        print('a')
-
-#comenzar_ronda()
