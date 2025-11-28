@@ -1,34 +1,34 @@
 [
     {
-        "nombre": "Lucas",
-        "puntos": {
-            "unos": 0,
-            "doses": 0,
+        "nombre": "Juani",
+        "puntaje": {
+            "Unos": 0,
+            "Doses": 0,
             "Treses": 0,
-            "cuatros": 0,
-            "cincos": 0,
-            "seises": 0,
-            "escalera": 0,
-            "full": 0,
-            "poker": 0,
-            "generala": 0
+            "Cuatros": 0,
+            "Cincos": 0,
+            "Seises": 0,
+            "Escalera": 0,
+            "Full": 0,
+            "Poker": 0,
+            "Generala": 0
         },
-        "puntaje total": 0
+        "puntajeTotal": 0
     },
     {
-        "nombre": "Juan",
-        "puntos": {
-            "unos": 0,
-            "doses": 0,
+        "nombre": "Lucas",
+        "puntaje": {
+            "Unos": 0,
+            "Doses": 0,
             "Treses": 0,
-            "cuatros": 0,
-            "cincos": 0,
-            "seises": 0,
-            "escalera": 0,
-            "full": 0,
-            "poker": 0,
-            "generala": 0
+            "Cuatros": 0,
+            "Cincos": 0,
+            "Seises": 0,
+            "Escalera": 0,
+            "Full": 0,
+            "Poker": 0,
+            "Generala": 0
         },
-        "puntaje total": 0
+        "puntajeTotal": 0
     }
 ]

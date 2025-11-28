@@ -157,6 +157,11 @@ def turno_jugadores(rondas, list_jug, categorias):
             print(f'-- {i+1}. {categorias[i]['Nombre']}: {tabla_puntajes[i]}')
 
         puntos = elegir_categoria(tabla_puntajes, categorias) # cambia esto despues con un verdadero modelo para los puntos asi se aplica bien
+        # Seguir codigo para sumar puntos por cada turno de jugador
+
+
+
+
 
 
 def puntajes_disponibles(dados, categorias):

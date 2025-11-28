@@ -6,12 +6,6 @@ import modulos.logica_juego.juego_funciones as p
 def validar_numero(texto):
     return texto.isdigit()
 
-
-# Valida texto vacio
-# Valida si la estadistica esta vacia
-# Valida si es positivo
-
-
 # Valida que la cantidad de jugadores sea un numero y no un caracter
 # Tambien verifica que el numero sea 1,2,3 o 4 , por los jugadores
 def validar_cant_jugadores_es_digito_y_entero() -> int:
@@ -24,7 +18,6 @@ def validar_cant_jugadores_es_digito_y_entero() -> int:
     jug = int(jug)
     print(f"Cantidad de jugadores valida: {jug}")
     return jug
-
 
 # Valida que no hay empates en la etapa de quien empieza primero
 def resolver_empates(dados_jugadores):

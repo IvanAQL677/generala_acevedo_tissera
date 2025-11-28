@@ -1,9 +1,5 @@
 import modulos.juego_estado as juego
-import modulos.datos.registrar_jug_en_partida as r
-
-url_tablero = "./json/tablero.json"
-url_categorias = "./json/categorias.json"
-list = [{"nombre": "Lucas"},{"nombre": "Juan"},{"nombre": "Cris"}]
+import modulos.datos.datos_funciones as r
 
 juegos_finalizados = 0
 while True:
@@ -17,10 +13,7 @@ Opciones:
 3)Creditos. 
 4)Crear archivos json. 
 5) Salir
-                        
-6) opcion de prueba                        
-                        """
-                        )
+                        """)
     opcion = int(input('Su opcion: '))
         
     if opcion == 1: 
@@ -35,7 +28,5 @@ Opciones:
     elif opcion == 5:
         print('Gracias por jugar')
         break
-    elif opcion == 6:
-        r.creacion_tablero(url_tablero,url_categorias,list)
     else:
         print('Opcion no valida')
