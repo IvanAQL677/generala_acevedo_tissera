@@ -5,6 +5,11 @@ import time
 
 # Comentar este import si se va a usar alguna funcion de manera directa, sobre este archivo
 import modulos.validaciones.valids as v
+import modulos.datos.datos_funciones as r
+
+nombre_archivo_jugadores = "./json/jugadores.json"
+url_tablero = "./json/tablero.json"
+url_categorias = "./json/categorias.json"
 
 def cargar_categorias():
     if not os.path.exists('json/categorias.json'):
@@ -74,6 +79,23 @@ def decidir_orden(list_jug):
 
     return info_jugadores
 
+
+def principio_juego():
+    #   comienza la ronda
+    #   se piden los jugadores que desean jugar
+    cant_jugadores = v.validar_cant_jugadores_es_digito_y_entero()
+    
+    #   se pide el nombre de cada jugador
+    jugadores = r.registrar_jugador(cant_jugadores,nombre_archivo_jugadores)
+    #   una vez ingresen los nombres, cada uno se guarda en un diccionario
+
+    tablero = r.creacion_tablero(url_tablero,url_categorias,nombre_archivo_jugadores)
+
+    #   una vez guarda los nombres de cada jugador, comienza a tirar cada uno un dado
+    lista_jug_ordenadas = decidir_orden(jugadores)
+    return lista_jug_ordenadas
+
+
 def elegir_conservados(dados):
     eleccion = input("Ingrese las posiciones de los dados que desea conservar.(separados por espacios)")
     if eleccion.strip() == "":
@@ -98,71 +120,6 @@ def aplicar_conservados_y_tirar(dados_actuales, indices_conservados):
 
 def tirar_dados(n):
         return [random.randint(1, 6) for _ in range(n)]
-
-# Funcion central para determinar el ganador de la partida
-# Se encarga de los turnos de todos los jugadores a traves de un ciclo
-def turno_jugadores(rondas, list_jug, categorias):
-    print(f"Ronda {rondas}")
-    for jugador in list_jug:
-        #   Muestra que es el turno del jugador
-        print("< < < < - - - - - - - - - - - - - - - - > > > >")
-        print(f"\t\tTurno de {jugador["nombre"]}")
-        print("< < < < - - - - - - - - - - - - - - - - > > > >")
-
-        # ===== PRIMER TIRO =====
-        input("Presione enter para el tiro 1")
-        time.sleep(2)
-        dados = tirar_dados(5)
-        print("Primer Tiro:")
-        print_dados(dados)
-
-        #   Mostrar tablero
-
-
-
-        #elige los dados que conservara por su posicion
-        conservados = elegir_conservados(dados)
-
-        # ===== SEGUNDO TIRO =====
-        input("Presione enter para el tiro 2")
-        time.sleep(2)
-        dados = aplicar_conservados_y_tirar(dados, conservados)
-        print("Segundo Tiro:")
-        print_dados(dados)
-
-        #   Mostrar tablero
-        
-        
-        
-        conservados = elegir_conservados(dados)
-
-        # ===== TERCER TIRO =====
-        input("Presione enter para el tiro 3")
-        time.sleep(2)
-        dados = aplicar_conservados_y_tirar(dados, conservados)
-        print("Tercer tiro:")
-        print_dados(dados)
-
-        #   Mostrar tablero
-        
-
-
-        
-        #   Mostrar tablero
-
-        tabla_puntajes = puntajes_disponibles(dados, categorias)
-
-        print('---------Tabla de puntajes!--------')
-        for i in range(len(categorias)):
-            print(f'-- {i+1}. {categorias[i]['Nombre']}: {tabla_puntajes[i]}')
-
-        puntos = elegir_categoria(tabla_puntajes, categorias) # cambia esto despues con un verdadero modelo para los puntos asi se aplica bien
-        # Seguir codigo para sumar puntos por cada turno de jugador
-
-
-
-
-
 
 def puntajes_disponibles(dados, categorias):
     resultados = [0] * len(categorias)
@@ -245,7 +202,7 @@ def elegir_categoria(puntajes, categorias) -> int:
         if eleccion.isdigit() and 0 < int(eleccion) <= len(categorias):
             index = int(eleccion)-1
             print(f'Elegiste la categoria {eleccion}. {categorias[index]["Nombre"]}')
-
+        
             return int(puntajes[index])
         else:
             for i in range(len(categorias)):
@@ -253,3 +210,74 @@ def elegir_categoria(puntajes, categorias) -> int:
                     print(f'Elegiste la categoria {i+1}. {categorias[i]}')
                     return int(puntajes[i])
         print('Error, opcion invalida o no encontrada.')
+
+# Funcion central para determinar el ganador de la partida
+# Se encarga de los turnos de todos los jugadores a traves de un ciclo
+def turno_jugadores(rondas, list_jug, categorias):
+    print(f"Ronda {rondas}")
+    for jugador in list_jug:
+        #   Muestra que es el turno del jugador
+        print("< < < < - - - - - - - - - - - - - - - - > > > >")
+        print(f"\t\tTurno de {jugador["nombre"]}")
+        print("< < < < - - - - - - - - - - - - - - - - > > > >")
+
+        # ===== PRIMER TIRO =====
+        input("Presione enter para el tiro 1")
+        time.sleep(2)
+        dados = tirar_dados(5)
+        #   Mostrar tablero
+        r.leer_tablero(url_tablero)
+        print("Primer Tiro:")
+        print_dados(dados)
+
+
+        #elige los dados que conservara por su posicion
+        conservados = elegir_conservados(dados)
+
+        # ===== SEGUNDO TIRO =====
+        input("Presione enter para el tiro 2")
+        time.sleep(2)
+        dados = aplicar_conservados_y_tirar(dados, conservados)
+        #   Mostrar tablero
+        r.leer_tablero(url_tablero)
+        print("Segundo Tiro:")
+        print_dados(dados)
+
+
+        conservados = elegir_conservados(dados)
+
+        # ===== TERCER TIRO =====
+        input("Presione enter para el tiro 3")
+        time.sleep(2)
+        dados = aplicar_conservados_y_tirar(dados, conservados)
+        #   Mostrar tablero
+        r.leer_tablero(url_tablero)
+        print("Tercer tiro:")
+        print_dados(dados)
+
+
+        tabla_puntajes = puntajes_disponibles(dados, categorias)
+        print(f"SOY TABLA PUNTAJES: \n {tabla_puntajes}")
+        
+        print('---------Tabla de puntajes!--------')
+        for i in range(len(categorias)):
+            print(f'-- {i+1}. {categorias[i]['Nombre']}: {tabla_puntajes[i]}')
+        puntos = elegir_categoria(tabla_puntajes, categorias) # cambia esto despues con un verdadero modelo para los puntos asi se aplica bien
+
+
+
+        # hay que terminar de actualizar los puntos en los jugadores y en el tablero para poder continuar
+
+        jug_puntos = {
+            "nombre": jugador["nombre"],
+            "categoria" : categorias["categoria"],
+            "valor": puntos
+        }
+        # Seguir codigo para sumar puntos por cada turno de jugador
+        #print(f"SOY CATEGORIAS : \n {}")
+        
+        print(f"SOY jug_puntos : \n {jug_puntos}")
+
+        r.actualizar_tablero(url_tablero,puntos)
+
+        r.leer_tablero(url_tablero)
