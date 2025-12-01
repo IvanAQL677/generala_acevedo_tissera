@@ -6,5 +6,5 @@ def comenzar_juego():
     categorias = j.cargar_categorias()
     lista_jug_ordenada = j.principio_juego()
     for i in range(len(categorias)):
-            j.turno_jugadores(rondas, lista_jug_ordenada, categorias)
+            j.turno_jugadores(rondas, lista_jug_ordenada["list_jug_ord"], categorias, lista_jug_ordenada["jugadores"])
             rondas += 1

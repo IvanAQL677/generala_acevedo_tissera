@@ -1,6 +1,5 @@
 import json
 
-
 escritura = "w"
 lectura = "r"
 # Por partida, registra cada jugador, y guarda los datos para la partida, en un archivo json
@@ -20,16 +19,16 @@ def registrar_jugador(cant_jug,nombre_archivo):
             datos_jug = {
                 "nombre": nombre_jug,
                 "puntaje":  {
-                        "Unos" : 0,
-                        "Doses" : 0,
-                        "Treses": 0,
-                        "Cuatros": 0,
-                        "Cincos": 0,
-                        "Seises": 0,
-                        "Escalera": 0,
-                        "Full": 0,
-                        "Poker": 0,
-                        "Generala": 0,
+                        "Unos" : "0",
+                        "Doses" : "0",
+                        "Treses": "0",
+                        "Cuatros": "0",
+                        "Cincos": "0",
+                        "Seises": "0",
+                        "Escalera": "0",
+                        "Full": "0",
+                        "Poker": "0",
+                        "Generala": "0",
                 },
                 "puntajeTotal": 0,
             }
@@ -130,7 +129,7 @@ def leer_tablero(nombre_arch_tablero):
             fila = f"║{categoria:^15}║"
             for jug in tablero[1]:
                 punt = jug["puntaje"][categoria]
-                fila += f"{punt:^15}║"
+                fila += f"{int(punt):^15}║"
             print(fila)
 
             # separador de categorías
@@ -148,28 +147,43 @@ def leer_tablero(nombre_arch_tablero):
         print(fila_total)
         print(pie)
 
-def actualizar_tablero(nombre_arch_tablero,datos_nuevos):
-    with open(nombre_arch_tablero,lectura,encoding="utf-8") as arch_tabl:
-        tablero = json.load(arch_tabl)
-        print(f"SOY DATOS NUEVOS: \n {datos_nuevos}")
-        nombre_buscado = datos_nuevos["nombre"]
-        categoria = datos_nuevos["categoria"]
-        valor = datos_nuevos["valor"]
+def actualizar_tablero(nombre_arch_tablero,datos_nuevos, nombre_arch_jugadores):
+    with open(nombre_arch_tablero,lectura,encoding="utf-8") as arch_tabl, \
+        open(nombre_arch_jugadores,lectura,encoding="utf-8") as archivo_jugadores:
+            tablero = json.load(arch_tabl)
+            arch_jug = json.load(archivo_jugadores)
+            nombre_buscado = datos_nuevos["nombre"]
+            categoria = datos_nuevos["categoria"]
+            valor = datos_nuevos["valor"]
 
-        jugadores = tablero[1]
+            jugadores_tablero = tablero[1]
+            
+            for jug in jugadores_tablero:
+                if jug["nombre"] == nombre_buscado:
 
-        for jug in jugadores:
-            if  jug["nombre"] == nombre_buscado:
-                #Actualiza puntaje
-                jug["puntaje"][categoria] = valor
+                    # Actualiza el puntaje en el tablero
+                    jug["puntaje"][categoria] = valor
 
-                #Actualiza el puntaje total
-                jug["puntajeTotal"] = sum(jug["puntaje"].values())
-                break
-        else:
-            print("El jugador " + nombre_buscado + " no existe")
-            return
-        
+                    # Actualiza puntaje total
+                    jug["puntajeTotal"] = sum(
+                        int(v) for v in jug["puntaje"].values() if v is not None
+                    )
+
+                    #Actualizo arch_jug
+                    for jug_arch in arch_jug:   # arch_jug es la LISTA del JSON
+                        if jug_arch["nombre"] == jug["nombre"]:
+                            jug_arch["puntaje"] = {
+                                cat: int(v) for cat, v in jug["puntaje"].items()
+                            }
+                            jug_arch["puntajeTotal"] = jug["puntajeTotal"]
+                            break
+                    break
+                else:
+                    print("El jugador " + nombre_buscado + " no existe")
+
         # Guardar cambios
-    with open(nombre_arch_tablero, "w", encoding="utf-8") as arch:
-        json.dump(tablero, arch, indent=4, ensure_ascii=False)
+    with open(nombre_arch_tablero, escritura, encoding="utf-8") as arch:
+        json.dump(tablero, arch, indent=4)
+    
+    with open(nombre_arch_jugadores,escritura,encoding="utf-8") as ar_ju:
+        json.dump(arch_jug,ar_ju, indent=4)

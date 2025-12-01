@@ -2,12 +2,10 @@ import random
 import json
 import os
 import time
-
-# Comentar este import si se va a usar alguna funcion de manera directa, sobre este archivo
 import modulos.validaciones.valids as v
 import modulos.datos.datos_funciones as r
 
-nombre_archivo_jugadores = "./json/jugadores.json"
+url_jugadores = "./json/jugadores.json"
 url_tablero = "./json/tablero.json"
 url_categorias = "./json/categorias.json"
 
@@ -26,13 +24,10 @@ def print_dados(dados):
     print()
     for i in dados:
         print(f"│ {i} │", end="  ")
-    #comentar este print para que se vea bien el total al la derecha
     print()
-    #print(f' = {total} TOTAL')
     for i in dados:
         print(f"└───┘", end="  ")
     print()
-
 
 def decidir_orden(list_jug):
     # cada jugador tira un dado y se guardan en un diccionario, dentro de una lista
@@ -42,6 +37,7 @@ def decidir_orden(list_jug):
     dado_ganador = 0
     ganador = {}
     print("<<<<<<------ Tiren los dados para decidir quien sera el que comienze el juego. ------>>>>>>")
+
 
     #   Ciclo para que cada jugador tire un dado y quede guardado su nombre y dado
     for jug in list_jug:
@@ -76,9 +72,7 @@ def decidir_orden(list_jug):
     print("< < < < < < - - - - - - - - - - - - - - - - > > > > > >")
     print(f"      El jugador {ganador["nombre"]} gano la ronda!. Comenzara primero")
     print("< < < < < < - - - - - - - - - - - - - - - - > > > > > >")
-
     return info_jugadores
-
 
 def principio_juego():
     #   comienza la ronda
@@ -86,15 +80,16 @@ def principio_juego():
     cant_jugadores = v.validar_cant_jugadores_es_digito_y_entero()
     
     #   se pide el nombre de cada jugador
-    jugadores = r.registrar_jugador(cant_jugadores,nombre_archivo_jugadores)
+    jugadores = r.registrar_jugador(cant_jugadores,url_jugadores)
     #   una vez ingresen los nombres, cada uno se guarda en un diccionario
 
-    tablero = r.creacion_tablero(url_tablero,url_categorias,nombre_archivo_jugadores)
+
+    tablero = r.creacion_tablero(url_tablero,url_categorias,url_jugadores)
 
     #   una vez guarda los nombres de cada jugador, comienza a tirar cada uno un dado
     lista_jug_ordenadas = decidir_orden(jugadores)
-    return lista_jug_ordenadas
-
+    return {"jugadores" : jugadores,
+            "list_jug_ord" : lista_jug_ordenadas}
 
 def elegir_conservados(dados):
     eleccion = input("Ingrese las posiciones de los dados que desea conservar.(separados por espacios)")
@@ -192,29 +187,93 @@ def puntajes_disponibles(dados, categorias):
                     resultados[i] = int(categoria["Puntaje"])
                 else:
                     resultados[i] = 0
-            
+
+
+
+            #agregar que cuando sea el primer tiro sume 100 puntos
+            #se agregaria en categorias, y hacer la logica
+
     return resultados
 
-def elegir_categoria(puntajes, categorias) -> int:
-    # se ingresa una eleccion. despues se fija si es un numero valido y sel regresa con el index correcto
+def elegir_categoria(puntajes, categorias, jugador) -> dict:
+    """
+    puntajes: lista con los valores calculados para cada categoria
+    categorias: lista de dicts como en tu JSON
+    jugador: dict con {"nombre":..., "puntaje":{categorias: valor}}
+    """
+
     while True:
-        eleccion = input('Elija una categoria (Puede ser su numero o su nombre): ')
-        if eleccion.isdigit() and 0 < int(eleccion) <= len(categorias):
-            index = int(eleccion)-1
-            print(f'Elegiste la categoria {eleccion}. {categorias[index]["Nombre"]}')
-        
-            return int(puntajes[index])
-        else:
-            for i in range(len(categorias)):
-                if categorias[i]["Nombre"].lower() == eleccion.lower():
-                    print(f'Elegiste la categoria {i+1}. {categorias[i]}')
-                    return int(puntajes[i])
-        print('Error, opcion invalida o no encontrada.')
+        eleccion = input('Elija una categoria (Puede ser su número o su nombre): ').strip()
+
+        # -----------------------------------------
+        #  Caso NÚMERO
+        # -----------------------------------------
+        if eleccion.isdigit():
+            idx = int(eleccion) - 1
+
+            # Queda arreglar codigo
+            if 0 <= idx < len(categorias):
+                nombre_cat = categorias[idx]["Nombre"]
+                valor_existente = "0"
+                for i in range(1, len(jugador)):
+                    print(jugador)
+                    print(i)
+                    if i == jugador[i]["puntaje"]:
+                        valor_existente = jugador[i]
+
+                # 0 = NO ANOTÓ TODAVÍA
+                if valor_existente == "0":
+                    print(f'Elegiste la categoría {eleccion}. {nombre_cat}')
+                    return {
+                        "nombre_cat": nombre_cat,
+                        "puntaje": puntajes[idx]
+                    }
+                else:
+                    print(f"Ya anotaste en '{nombre_cat}'. Elegí otra categoría.\n")
+                    continue
+            else:
+                print("Número fuera de rango.\n")
+                continue
+
+        # -----------------------------------------
+        #  Caso NOMBRE
+        # -----------------------------------------
+        elec_lower = eleccion.lower()
+        encontrado = False
+
+        for i, cat in enumerate(categorias):
+            if cat["Nombre"].lower() == elec_lower:
+                encontrado = True
+                nombre_cat = cat["Nombre"]
+                valor_existente = jugador["puntaje"][nombre_cat]
+
+                if valor_existente == "0":
+                    print(f'Elegiste la categoría {i+1}. {nombre_cat}')
+                    return {
+                        "nombre_cat": nombre_cat,
+                        "puntaje": puntajes[i]
+                    }
+                else:
+                    print(f"Ya anotaste en '{nombre_cat}'. Elegí otra categoría.\n")
+                    break  # vuelve al while a pedir de nuevo
+
+        if not encontrado:
+            print("Categoría no encontrada. Intentá de nuevo.\n")
+
+
+
+
+
+
+
+
+
+
 
 # Funcion central para determinar el ganador de la partida
 # Se encarga de los turnos de todos los jugadores a traves de un ciclo
-def turno_jugadores(rondas, list_jug, categorias):
-    print(f"Ronda {rondas}")
+def turno_jugadores(rondas, list_jug, categorias, jugadores):
+    print(f"\t\tRonda {rondas}")
     for jugador in list_jug:
         #   Muestra que es el turno del jugador
         print("< < < < - - - - - - - - - - - - - - - - > > > >")
@@ -225,59 +284,40 @@ def turno_jugadores(rondas, list_jug, categorias):
         input("Presione enter para el tiro 1")
         time.sleep(2)
         dados = tirar_dados(5)
-        #   Mostrar tablero
         r.leer_tablero(url_tablero)
         print("Primer Tiro:")
         print_dados(dados)
-
-
-        #elige los dados que conservara por su posicion
         conservados = elegir_conservados(dados)
 
         # ===== SEGUNDO TIRO =====
         input("Presione enter para el tiro 2")
         time.sleep(2)
         dados = aplicar_conservados_y_tirar(dados, conservados)
-        #   Mostrar tablero
         r.leer_tablero(url_tablero)
         print("Segundo Tiro:")
         print_dados(dados)
-
-
         conservados = elegir_conservados(dados)
 
         # ===== TERCER TIRO =====
         input("Presione enter para el tiro 3")
         time.sleep(2)
         dados = aplicar_conservados_y_tirar(dados, conservados)
-        #   Mostrar tablero
         r.leer_tablero(url_tablero)
         print("Tercer tiro:")
         print_dados(dados)
 
-
-        tabla_puntajes = puntajes_disponibles(dados, categorias)
-        print(f"SOY TABLA PUNTAJES: \n {tabla_puntajes}")
-        
-        print('---------Tabla de puntajes!--------')
+        tabla_puntajes = puntajes_disponibles(dados, categorias)        
+        print('--------- Posibles opciones de anotar --------')
         for i in range(len(categorias)):
-            print(f'-- {i+1}. {categorias[i]['Nombre']}: {tabla_puntajes[i]}')
-        puntos = elegir_categoria(tabla_puntajes, categorias) # cambia esto despues con un verdadero modelo para los puntos asi se aplica bien
-
-
-
-        # hay que terminar de actualizar los puntos en los jugadores y en el tablero para poder continuar
+            print(f'{i+1}). {categorias[i]['Nombre']}: {tabla_puntajes[i]}')
+        cat_y_puntos = elegir_categoria(tabla_puntajes, categorias, jugadores) # cambia esto despues con un verdadero modelo para los puntos asi se aplica bien
 
         jug_puntos = {
             "nombre": jugador["nombre"],
-            "categoria" : categorias["categoria"],
-            "valor": puntos
+            "categoria" : cat_y_puntos["nombre_cat"],
+            "valor": cat_y_puntos["puntaje"]
         }
-        # Seguir codigo para sumar puntos por cada turno de jugador
-        #print(f"SOY CATEGORIAS : \n {}")
-        
-        print(f"SOY jug_puntos : \n {jug_puntos}")
 
-        r.actualizar_tablero(url_tablero,puntos)
 
+        r.actualizar_tablero(url_tablero,jug_puntos,url_jugadores)
         r.leer_tablero(url_tablero)
