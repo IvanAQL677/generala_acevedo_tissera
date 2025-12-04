@@ -58,5 +58,11 @@
         "Tipo": "estatico",
         "Requerimiento": "todos",
         "Puntaje": "50"
+    },
+    {
+        "Nombre": "GeneralaServida",
+        "Tipo": "estatico",
+        "Requerimiento": "Gservida",
+        "Puntaje" : "100"
     }
 ]

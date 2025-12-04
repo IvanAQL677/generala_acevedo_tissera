@@ -1,0 +1,66 @@
+[
+    {
+        "nombre": "Juan",
+        "puntaje": {
+            "Unos": 1,
+            "Doses": 6,
+            "Treses": 3,
+            "Cuatros": 16,
+            "Cincos": 5,
+            "Seises": 12,
+            "Escalera": 20,
+            "Full": 30,
+            "Poker": 40,
+            "Generala": 0
+        },
+        "puntajeTotal": 133
+    },
+    {
+        "nombre": "Lucas",
+        "puntaje": {
+            "Unos": 1,
+            "Doses": 2,
+            "Treses": 9,
+            "Cuatros": 4,
+            "Cincos": 15,
+            "Seises": 18,
+            "Escalera": 0,
+            "Full": 30,
+            "Poker": 40,
+            "Generala": 0
+        },
+        "puntajeTotal": 119
+    },
+    {
+        "nombre": "Cami",
+        "puntaje": {
+            "Unos": 1,
+            "Doses": 2,
+            "Treses": 3,
+            "Cuatros": 16,
+            "Cincos": 15,
+            "Seises": 18,
+            "Escalera": 20,
+            "Full": 30,
+            "Poker": 40,
+            "Generala": 0
+        },
+        "puntajeTotal": 145
+    },
+    {
+        "nombre": "Tomi",
+        "puntaje": {
+            "Unos": 1,
+            "Doses": 6,
+            "Treses": 9,
+            "Cuatros": 12,
+            "Cincos": 15,
+            "Seises": 18,
+            "Escalera": 0,
+            "Full": 30,
+            "Poker": 40,
+            "Generala": 0
+        },
+        "puntajeTotal": 131
+    }
+]

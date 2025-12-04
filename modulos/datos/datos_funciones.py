@@ -7,7 +7,7 @@ lectura = "r"
 def registrar_jugador(cant_jug,nombre_archivo):
     jugadores = []
     escritura = "w"
-
+    
     with open(nombre_archivo, escritura , encoding="utf-8") as archivo:
         for i in range(cant_jug):
             nombre_jug = input(f"Ingrese en nombre del jugador {i + 1} :").strip()
@@ -99,7 +99,14 @@ def creacion_tablero(nombre_archivo_tablero, nombre_archivo_categorias, nombres_
                     datos_tablero = [nombres_categorias,puntos_jugs]   
                     json.dump(datos_tablero,archivo_tablero,indent=4)
 
-def leer_tablero(nombre_arch_tablero):
+def puntos_jug_tablero(nombre_archivo_tablero):
+    with open(nombre_archivo_tablero,lectura,encoding="utf-8") as arch_tab:
+        tablero = json.load(arch_tab)
+        puntos_jugadores = tablero[1]
+        return puntos_jugadores
+
+
+def print_tablero(nombre_arch_tablero):
     with open(nombre_arch_tablero,lectura,encoding="utf-8") as arch_tablero:
         tablero = json.load(arch_tablero)
         encabezado = "╔" + "═" * 15 + "╦" + ("═" * 15 + "╗") * len(tablero[1])
@@ -157,7 +164,8 @@ def actualizar_tablero(nombre_arch_tablero,datos_nuevos, nombre_arch_jugadores):
             valor = datos_nuevos["valor"]
 
             jugadores_tablero = tablero[1]
-            
+
+
             for jug in jugadores_tablero:
                 if jug["nombre"] == nombre_buscado:
 

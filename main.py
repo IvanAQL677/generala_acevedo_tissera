@@ -15,7 +15,6 @@ Opciones:
 5) Salir
                         """)
     opcion = int(input('Su opcion: '))
-        
     if opcion == 1: 
         juego.comenzar_juego()
         juegos_finalizados += 1
@@ -24,7 +23,8 @@ Opciones:
     elif opcion == 3:
         print(f'Codigo por: \n\tLucas Tissera \n\tAcevedo')
     elif opcion == 4:
-        juego.jason.iniciar_json()
+        pass
+        #juego.jason.iniciar_json()
     elif opcion == 5:
         print('Gracias por jugar')
         break

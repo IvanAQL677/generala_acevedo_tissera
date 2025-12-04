@@ -2,9 +2,18 @@
 import modulos.logica_juego.juego_funciones as j
 
 def comenzar_juego():
-    rondas = 1
-    categorias = j.cargar_categorias()
-    lista_jug_ordenada = j.principio_juego()
-    for i in range(len(categorias)):
-            j.turno_jugadores(rondas, lista_jug_ordenada["list_jug_ord"], categorias, lista_jug_ordenada["jugadores"])
-            rondas += 1
+        rondas = 1
+        ganador = dict()
+        categorias = j.cargar_categorias()
+        lista_jug_ordenada = j.principio_juego()
+        for i in range(len(categorias) - 1):
+                ganador = j.turno_jugadores(rondas, lista_jug_ordenada, categorias)
+                rondas += 1
+
+        print("< < < < - - - - - - - - - - - - - - - - > > > >")
+        print(f"\t \t JUEGO FINALIZADO")
+        print("< < < < - - - - - - - - - - - - - - - - > > > >")
+        print(f"\t    Gano {ganador["nombre"]}, con un total de {ganador["puntajeTotal"]} puntos.\n \t     Felicitaciones ! ! ! ")
+        print("< < < < - - - - - - - - - - - - - - - - > > > >")
+
+

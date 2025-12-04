@@ -10,9 +10,9 @@ def validar_numero(texto):
 # Tambien verifica que el numero sea 1,2,3 o 4 , por los jugadores
 def validar_cant_jugadores_es_digito_y_entero() -> int:
     jug = input("Numero de jugadores(maximo de 4 jugadores): ").strip()
-    while not validar_numero(jug) or not (1 <= int(jug) <= 4):
-        print("Ingrese un numero entero valido entre el 1 y el 4.")
-        jug = input("Numero de jugadores(maximo de 4 jugadores): ").strip()
+    while not validar_numero(jug) or not (1 < int(jug) <= 4):
+        print("Ingrese un numero entero valido entre el 2 y el 4.")
+        jug = input("Numero de jugadores(de 2 a 4 jugadores): ").strip()
 
     # Una vez la supera al while, retorna la cantidad de jugadores
     jug = int(jug)
