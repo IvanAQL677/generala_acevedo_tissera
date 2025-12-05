@@ -1,7 +1,8 @@
 import modulos.juego_estado as juego
 import modulos.datos.datos_funciones as r
 
-juegos_finalizados = 0
+nombre_archivo_estadistica = "./json/estadisticas.csv"
+
 while True:
     mensaje_info =print("""
 ================
@@ -11,21 +12,20 @@ Opciones:
 1)Jugar. 
 2)Estadisticas. 
 3)Creditos. 
-4)Crear archivos json. 
-5) Salir
+4) Salir
                         """)
+#4)Crear archivos json. 
     opcion = int(input('Su opcion: '))
     if opcion == 1: 
         juego.comenzar_juego()
-        juegos_finalizados += 1
     elif opcion == 2:
-        print(f'Jugo {juegos_finalizados} juegos')
+        r.mostrar_estadisticas(nombre_archivo_estadistica)
     elif opcion == 3:
-        print(f'Codigo por: \n\tLucas Tissera \n\tAcevedo')
-    elif opcion == 4:
-        pass
+        r.print_creditos()
+    #elif opcion == 4:
+        #pass
         #juego.jason.iniciar_json()
-    elif opcion == 5:
+    elif opcion == 4:
         print('Gracias por jugar')
         break
     else:

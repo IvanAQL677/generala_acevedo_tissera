@@ -1,7 +1,9 @@
 import json
+import os
 
 escritura = "w"
 lectura = "r"
+append = "a"
 # Por partida, registra cada jugador, y guarda los datos para la partida, en un archivo json
 # Si se crea otra partida nueva, los nuevos jugadores pisan a los viejos, dejando solos los nuevos
 def registrar_jugador(cant_jug,nombre_archivo):
@@ -105,7 +107,6 @@ def puntos_jug_tablero(nombre_archivo_tablero):
         puntos_jugadores = tablero[1]
         return puntos_jugadores
 
-
 def print_tablero(nombre_arch_tablero):
     with open(nombre_arch_tablero,lectura,encoding="utf-8") as arch_tablero:
         tablero = json.load(arch_tablero)
@@ -150,7 +151,6 @@ def print_tablero(nombre_arch_tablero):
             fila_total += f"{jug["puntajeTotal"]:^15}║"
 
         pie ="╚" + "═" * 15 + "╩" + ("═" * 15 + "╝") * len(tablero[1])
-
         print(fila_total)
         print(pie)
 
@@ -165,7 +165,6 @@ def actualizar_tablero(nombre_arch_tablero,datos_nuevos, nombre_arch_jugadores):
 
             jugadores_tablero = tablero[1]
 
-
             for jug in jugadores_tablero:
                 if jug["nombre"] == nombre_buscado:
 
@@ -178,16 +177,14 @@ def actualizar_tablero(nombre_arch_tablero,datos_nuevos, nombre_arch_jugadores):
                     )
 
                     #Actualizo arch_jug
-                    for jug_arch in arch_jug:   # arch_jug es la LISTA del JSON
+                    for jug_arch in arch_jug:
                         if jug_arch["nombre"] == jug["nombre"]:
                             jug_arch["puntaje"] = {
-                                cat: int(v) for cat, v in jug["puntaje"].items()
+                                cat: v for cat, v in jug["puntaje"].items()
                             }
                             jug_arch["puntajeTotal"] = jug["puntajeTotal"]
                             break
                     break
-                else:
-                    print("El jugador " + nombre_buscado + " no existe")
 
         # Guardar cambios
     with open(nombre_arch_tablero, escritura, encoding="utf-8") as arch:
@@ -195,3 +192,52 @@ def actualizar_tablero(nombre_arch_tablero,datos_nuevos, nombre_arch_jugadores):
     
     with open(nombre_arch_jugadores,escritura,encoding="utf-8") as ar_ju:
         json.dump(arch_jug,ar_ju, indent=4)
+
+def guardar_estadistica(jugadores, ruta_csv_est):
+    # Revisar si existe el archivo
+    archivo_existe = os.path.exists(ruta_csv_est)
+
+    with open(ruta_csv_est, append, encoding="utf-8") as archivo:
+        # Si el archivo no existe, escribir encabezado
+        if not archivo_existe:
+            archivo.write("nombre,puntaje\n")
+
+        # Guardar cada jugador
+        for jug in jugadores:
+            linea = f"{jug['nombre']},{jug['puntaje_total']}\n"
+            archivo.write(linea)
+
+
+def mostrar_estadisticas(ruta_csv_est):
+    if not os.path.exists(ruta_csv_est):
+        print("Aún no hay estadísticas guardadas.")
+        return
+    
+    estadisticas = []
+
+    with open(ruta_csv_est,lectura, encoding="utf-8") as archivo:
+        lineas = archivo.readlines()
+
+    for linea in lineas[1:]:
+        nombre, puntaje = linea.strip().split(",")
+        estadisticas.append({"nombre": nombre, "puntaje_total": int(puntaje)})
+
+    estadisticas.sort(key=lambda x: x["puntaje_total"], reverse=True)
+
+    top10 = estadisticas[:10]
+
+    print("\n===== TOP 10 =====")
+    for i, est in enumerate(top10, start=1):
+        print(f"{i}. {est['nombre']:12} {est['puntaje_total']} puntos")
+
+def print_creditos():
+    print("------------------------------------------------------")
+    print("\t\tMINI GENERALA TEMATICA")
+    print("------------------------------------------------------")
+    print("Author/es: Tissera Lucas y Acevedo Ivan")
+    print("Fecha: NOV-DIC 2025")
+    print("Materia: Programacion I")
+    print("Docentes: Martín Alejandro García")
+    print("Carrera: Tecnicatura en Programacion Informatica")
+    print("Contacto: lucas.tissera@hotmail.com")
+    print("------------------------------------------------------")

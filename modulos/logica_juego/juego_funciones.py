@@ -16,7 +16,6 @@ def cargar_categorias():
         categorias_lista = json.load(info)
         return categorias_lista
 
-
 # Funcion que solo funciona para printear dados que vayan tirando durante el juego
 def print_dados(dados):
     for i in range(1,len(dados) + 1):
@@ -89,11 +88,35 @@ def principio_juego():
     return lista_jug_ordenadas
 
 def elegir_conservados(dados):
-    eleccion = input("Ingrese las posiciones de los dados que desea conservar.(separados por espacios)")
-    if eleccion.strip() == "":
-        return [] # No conservo ninguno
-    indices = [int(x) - 1 for x in eleccion.split()]
-    return indices
+    cant_dados = len(dados)
+    while True:
+        eleccion = input(
+            f"Ingrese las posiciones a conservar (1-{cant_dados}, separadas por espacios, o vacío para ninguna): "
+        ).strip()
+
+        # Caso entrada vacía → no conserva nada
+        if eleccion == "":
+            return []
+
+        partes = eleccion.split()
+
+        # Valida que todas las partes sean dígitos
+        if not all(p.isdigit() for p in partes):
+            print("Error: Solo se permiten números separados por espacios.\n")
+            continue
+
+        # Convierte a índices
+        indices = [int(p) for p in partes]
+
+        # Valida rango
+        if not all(1 <= x <= cant_dados for x in indices):
+            print(f"Error: Las posiciones válidas son del 1 al {cant_dados}.\n")
+            continue
+
+        # Eliminar duplicados
+        indices = sorted(set(x - 1 for x in indices))
+
+        return indices
 
 def aplicar_conservados_y_tirar(dados_actuales, indices_conservados):
     #   dados_actuales: lista de 5 valores
@@ -139,7 +162,7 @@ def puntajes_disponibles(dados, categorias):
                 if es_secuencia:
                     resultados[i] = int(categoria["Puntaje"])
                 else:
-                    resultados[i] = "0"
+                    resultados[i] = 0
 
             elif categoria["Requerimiento"] == '2 y 3' or categoria["Requerimiento"] == '4 y 1':
                 # se ordena y se hace un diccionario 'conteos' donde se añade cada numero nuevo. si no esta en conteos se lo añade, y si ya esta se le suma 1 a la cantidad 
@@ -166,12 +189,12 @@ def puntajes_disponibles(dados, categorias):
                     if hay_3 and hay_2:
                         resultados[i] = int(categoria["Puntaje"])
                     else:
-                        resultados[i] = "0"
+                        resultados[i] = 0
                 elif categoria["Requerimiento"] == '4 y 1':
                     if hay_4:
                         resultados[i] = int(categoria["Puntaje"])
                     else:
-                        resultados[i] = "0"
+                        resultados[i] = 0
 
             # si se encuentra uno diferente se pone como falso
             elif categoria["Requerimiento"] == 'todos':
@@ -183,13 +206,9 @@ def puntajes_disponibles(dados, categorias):
                 if todos_iguales:
                     resultados[i] = int(categoria["Puntaje"])
                 else:
-                    resultados[i] = "0"
-
-
+                    resultados[i] = 0
 
             #agregar que cuando sea el primer tiro sume 100 puntos
-            #se agregaria en categorias, y hacer la logica
-
     return resultados
 
 def elegir_categoria(puntajes, categorias, jugador) -> dict:
@@ -200,27 +219,22 @@ def elegir_categoria(puntajes, categorias, jugador) -> dict:
     """
     while True:
         eleccion = input('Ingrese una categoria a anotar: ').strip()
-
         if eleccion.isdigit():
             idx = int(eleccion) - 1
-
             if 0 <= idx < len(categorias):
                 nombre_cat = categorias[idx]["Nombre"]
-                
                 # Obtener si el jugador ya anotó
                 valor_existente = jugador["puntaje"][nombre_cat]
                 # Si NO es "0", entonces ya usó esa categoría
                 if valor_existente != "0":
                     print(f"Ya anotaste en '{nombre_cat}'. Elegí otra categoría.\n")
                     continue
-
                 # Si es "0", puede anotarla
                 print(f'Elegiste la categoría {eleccion}. {nombre_cat}')
                 return {
                     "nombre_cat": nombre_cat,
                     "puntaje": puntajes[idx]
                 }
-
             else:
                 print("Número fuera de rango.\n")
                 continue
@@ -228,7 +242,7 @@ def elegir_categoria(puntajes, categorias, jugador) -> dict:
 # Funcion central para determinar el ganador de la partida
 # Se encarga de los turnos de todos los jugadores a traves de un ciclo
 def turno_jugadores(rondas, list_jug, categorias):
-    print(f"\t\tRonda {rondas}")
+    print(f"\t\tRonda {rondas - 1}")
     for jugador in list_jug:
         #   Muestra que es el turno del jugador
         print("< < < < - - - - - - - - - - - - - - - - > > > >")
@@ -266,9 +280,6 @@ def turno_jugadores(rondas, list_jug, categorias):
         tabla_puntajes = puntajes_disponibles(dados, categorias)        
         print('--------- Posibles opciones de anotar --------')
         for i in range(len(categorias)):
-            
-            #arreglar este if para que muestre las opciones que no haya anotado
-            #if tabla_puntajes[i] != "0":
             print(f'{i+1}). {categorias[i]['Nombre']}: {tabla_puntajes[i]}')
 
         jug = dict() 
@@ -289,9 +300,20 @@ def turno_jugadores(rondas, list_jug, categorias):
 
     punt_ganador = 0
     ganador = dict()
+    est_cont = []
     #retornar al ganador
     for i in range(0, len(puntos_jugs)):
         if puntos_jugs[i]["puntajeTotal"] > punt_ganador:
             punt_ganador = puntos_jugs[i]["puntajeTotal"]
             ganador = puntos_jugs[i]
-    return ganador
+
+            est_dict = {
+                "nombre" : puntos_jugs[i]["nombre"],
+                "puntaje_total": puntos_jugs[i]["puntajeTotal"]
+            }
+            est_cont.append(est_dict)
+
+    return {
+                "ganador" : ganador,
+                "estadistica" : est_cont
+            }
